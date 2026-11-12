@@ -1,0 +1,254 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2026-09-30 12:47:54",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_124754_4471.jpg"
+  },
+  {
+    "id": 2,
+    "timestamp": "2026-09-30 12:48:27",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_124827_7374.jpg"
+  },
+  {
+    "id": 3,
+    "timestamp": "2026-09-30 12:48:32",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_124832_2639.jpg"
+  },
+  {
+    "id": 4,
+    "timestamp": "2026-09-30 12:48:47",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_124847_7860.jpg"
+  },
+  {
+    "id": 5,
+    "timestamp": "2026-09-30 12:48:51",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_124851_1994.jpg"
+  },
+  {
+    "id": 6,
+    "timestamp": "2026-09-30 12:49:07",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_124907_7335.jpg"
+  },
+  {
+    "id": 7,
+    "timestamp": "2026-09-30 12:50:50",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125050_957.jpg"
+  },
+  {
+    "id": 8,
+    "timestamp": "2026-09-30 12:51:02",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125102_2132.jpg"
+  },
+  {
+    "id": 9,
+    "timestamp": "2026-09-30 12:51:06",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125106_6979.jpg"
+  },
+  {
+    "id": 10,
+    "timestamp": "2026-09-30 12:51:22",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125122_2475.jpg"
+  },
+  {
+    "id": 11,
+    "timestamp": "2026-09-30 12:51:25",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125125_5345.jpg"
+  },
+  {
+    "id": 12,
+    "timestamp": "2026-09-30 12:51:40",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125140_964.jpg"
+  },
+  {
+    "id": 13,
+    "timestamp": "2026-09-30 12:51:43",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125143_3939.jpg"
+  },
+  {
+    "id": 14,
+    "timestamp": "2026-09-30 12:51:59",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125159_9443.jpg"
+  },
+  {
+    "id": 15,
+    "timestamp": "2026-09-30 12:52:14",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125214_4542.jpg"
+  },
+  {
+    "id": 16,
+    "timestamp": "2026-09-30 12:52:29",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125229_9960.jpg"
+  },
+  {
+    "id": 17,
+    "timestamp": "2026-09-30 12:52:51",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125251_1993.jpg"
+  },
+  {
+    "id": 18,
+    "timestamp": "2026-09-30 12:53:07",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125307_7505.jpg"
+  },
+  {
+    "id": 19,
+    "timestamp": "2026-09-30 12:53:14",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125314_4528.jpg"
+  },
+  {
+    "id": 20,
+    "timestamp": "2026-09-30 12:53:29",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125329_9999.jpg"
+  },
+  {
+    "id": 21,
+    "timestamp": "2026-09-30 12:54:04",
+    "caso": "Caso 3",
+    "tipo": "Fuego Controlado",
+    "descripcion": "Normalización térmica y rearmado de aspersor a 0°",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125404_4911.jpg"
+  },
+  {
+    "id": 22,
+    "timestamp": "2026-09-30 12:54:09",
+    "caso": "Caso 2",
+    "tipo": "Sobrellenado",
+    "descripcion": "Corte automático de válvula al 100.0%",
+    "severidad": "ALTA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125409_9357.jpg"
+  },
+  {
+    "id": 23,
+    "timestamp": "2026-09-30 12:54:20",
+    "caso": "Caso 3",
+    "tipo": "Conato de Fuego",
+    "descripcion": "Apertura de servomotor por fuego (65.0°C)",
+    "severidad": "CRITICA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20260930_125420_406.jpg"
+  },
+  {
+    "id": 24,
+    "timestamp": "2026-11-11 20:29:09",
+    "caso": "Caso 2",
+    "tipo": "Sobrellenado",
+    "descripcion": "Corte automático de válvula al 90.0%",
+    "severidad": "ALTA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20261111_202909_9390.jpg"
+  },
+  {
+    "id": 25,
+    "timestamp": "2026-11-11 20:29:54",
+    "caso": "Caso 1",
+    "tipo": "Operador Ausente",
+    "descripcion": "Paro preventivo tras 10s de desatención",
+    "severidad": "MEDIA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20261111_202954_4559.jpg"
+  },
+  {
+    "id": 26,
+    "timestamp": "2026-11-11 20:30:01",
+    "caso": "Caso 1",
+    "tipo": "Retorno de Operador",
+    "descripcion": "Máquina rotatoria reactivada por presencia",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20261111_203001_1585.jpg"
+  },
+  {
+    "id": 27,
+    "timestamp": "2026-11-11 20:30:14",
+    "caso": "Caso 1",
+    "tipo": "Operador Ausente",
+    "descripcion": "Paro preventivo tras 10s de desatención",
+    "severidad": "MEDIA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20261111_203014_4030.jpg"
+  },
+  {
+    "id": 28,
+    "timestamp": "2026-11-11 20:30:20",
+    "caso": "Caso 1",
+    "tipo": "Retorno de Operador",
+    "descripcion": "Máquina rotatoria reactivada por presencia",
+    "severidad": "BAJA",
+    "evidencia_foto": "C:\\Users\\Alexr\\Downloads\\pianitech_scada_corregido\\evidence\\evidencia_20261111_203020_454.jpg"
+  }
+]

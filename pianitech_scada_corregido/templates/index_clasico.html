@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pianitech - Panel de Control Industrial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/mqtt.min.js"></script>
+</head>
+<body class="bg-blue-50 text-slate-800 font-sans min-h-screen">
+
+  <header class="bg-white border-b border-blue-200 px-6 py-3.5 flex flex-wrap justify-between items-center shadow-sm">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+        P
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-lg font-bold text-blue-950 tracking-tight">PIANITECH</h1>
+          <span class="px-2 py-0.5 text-[11px] font-medium bg-blue-100 text-blue-800 rounded">Supervisión Autónoma</span>
+        </div>
+        <p class="text-xs text-slate-500">Línea 3 · Celda de Mecanizado y Conformado</p>
+      </div>
+    </div>
+    <div class="flex items-center space-x-2.5 mt-2 sm:mt-0">
+      <div class="text-xs font-semibold px-2.5 py-1 bg-slate-100 border border-slate-200 rounded text-slate-700">
+        Incidentes registrados: <span id="contador-incidentes" class="text-rose-600 font-bold">0</span>
+      </div>
+      <button onclick="solicitarAnalisisIA()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-medium transition shadow-sm">
+        Auditoría IA
+      </button>
+      <a href="/api/descargar_reporte_pdf" class="px-3 py-1.5 bg-white hover:bg-blue-50 border border-blue-300 text-blue-900 rounded text-xs font-medium transition shadow-sm">
+        Descargar Reporte PDF con Evidencias
+      </a>
+      <button onclick="limpiarHistorial()" title="Limpiar bitácora acumulada" class="px-2 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded text-xs">
+        🗑️
+      </button>
+    </div>
+  </header>
+
+  <main class="p-6 max-w-7xl mx-auto space-y-5">
+    
+    <div id="banner-audio" class="bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-3 mb-4 text-xs rounded shadow-sm flex items-center justify-between">
+      <span>🔊 <b>Aviso del Sistema:</b> Haz clic en cualquier parte de esta página o pulsa "Activar Audio" para habilitar los reportes por voz y las alertas sonoras.</span>
+      <button onclick="document.getElementById('banner-audio').style.display='none'; anunciarBienvenidaSistema();" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[11px] font-bold">Activar Audio</button>
+    </div>
+
+That... 
+    <div id="banner-audio" class="bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-3 mb-4 text-xs rounded shadow-sm flex items-center justify-between">
+      <span>🔊 <b>Aviso del Sistema:</b> Haz clic en cualquier parte de esta página o pulsa "Activar Audio" para habilitar los reportes por voz y las alertas sonoras.</span>
+      <button onclick="document.getElementById('banner-audio').style.display='none'; anunciarBienvenidaSistema();" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[11px] font-bold">Activar Audio</button>
+    </div>
+
+
+    <div id="toast-evento" class="hidden p-2.5 bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs rounded shadow-sm flex items-center justify-between">
+      <span id="toast-msg">Evento ejecutado.</span>
+      <span class="text-[10px] text-emerald-600 font-semibold uppercase">Guardado en Bitácora</span>
+    </div>
+
+    <!-- 4 Estaciones de Control -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- Caso 1: Máquina Rotatoria -->
+      <div class="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-2.5">
+            <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wide">1. Máquina Rotatoria</h2>
+            <span id="badge-c1" class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">NORMAL</span>
+          </div>
+          <div class="flex items-center space-x-3 mb-2.5">
+            <div id="fan-icon" class="text-2xl transition-transform duration-500 animate-spin">🌀</div>
+            <div>
+              <div class="text-lg font-bold text-slate-900" id="c1-estado-fan">ACTIVO</div>
+              <p class="text-xs text-slate-500 font-medium" id="c1-operador-txt">Operador: En puesto</p>
+            </div>
+          </div>
+          <div class="text-xs text-slate-600 mb-2.5 flex items-center justify-between bg-slate-50 p-2 rounded border border-slate-100">
+            <span>Tiempo Ausente:</span>
+            <span class="text-sm font-bold text-rose-600" id="c1-tiempo">0s</span>
+            <span class="text-[10px] text-slate-400">/ 10s corte</span>
+          </div>
+          <div class="p-2.5 bg-blue-50/60 border border-blue-100 rounded text-xs text-slate-700 min-h-[46px]">
+            <b class="text-slate-500 block text-[10px] uppercase mb-0.5">Acción del Sistema:</b>
+            <span id="c1-decision">Monitoreando operador...</span>
+          </div>
+        </div>
+        <div class="pt-2.5 border-t border-slate-100 flex flex-col gap-1.5 mt-2.5">
+          <div class="flex gap-2">
+            <button onclick="forzarEvento('ingresar_operador')" class="flex-1 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium">Llega Operador</button>
+            <button onclick="forzarEvento('iniciar_conteo_ausencia')" class="flex-1 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded text-xs font-medium">Simular Salida</button>
+          </div>
+          <button onclick="forzarEvento('retirar_operador')" class="w-full py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded text-xs font-medium">Forzar Paro (>10s)</button>
+        </div>
+      </div>
+
+      <!-- Caso 2: Tanque de Agua -->
+      <div class="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-2.5">
+            <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wide">2. Nivel de Tanque</h2>
+            <span id="badge-c2" class="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">LLENANDO</span>
+          </div>
+          <div class="flex items-center space-x-3 mb-2.5">
+            <div class="text-2xl">🚰</div>
+            <div>
+              <div class="text-lg font-bold text-blue-900" id="c2-nivel-txt">45%</div>
+              <p class="text-xs text-slate-500" id="c2-valvula-txt">Válvula: Abierta</p>
+            </div>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2 mb-2.5 overflow-hidden">
+            <div id="c2-barra" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 45%"></div>
+          </div>
+          <div class="p-2.5 bg-blue-50/60 border border-blue-100 rounded text-xs text-slate-700 min-h-[46px]">
+            <b class="text-slate-500 block text-[10px] uppercase mb-0.5">Acción del Sistema:</b>
+            <span id="c2-decision">Monitoreando nivel...</span>
+          </div>
+        </div>
+        <div class="pt-2.5 border-t border-slate-100 flex gap-2 mt-2.5">
+          <button onclick="forzarNivel(30)" class="flex-1 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium">30% Nominal</button>
+          <button onclick="forzarNivel(95)" class="flex-1 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded text-xs font-medium">95% Paro Válvula</button>
+        </div>
+      </div>
+
+      <!-- Caso 3: Térmico y Fuego -->
+      <div class="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-2.5">
+            <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wide">3. Extinción Térmica</h2>
+            <span id="badge-c3" class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">NORMAL</span>
+          </div>
+          <div class="flex items-center space-x-3 mb-2.5">
+            <div id="fire-icon" class="text-2xl">🌡️</div>
+            <div>
+              <div class="text-lg font-bold text-slate-900" id="c3-temp-txt">28.5 °C</div>
+              <p class="text-xs text-slate-500" id="c3-servo-txt">Aspersor: 0° (Cerrado)</p>
+            </div>
+          </div>
+          <div class="text-xs text-slate-600 mb-2.5">
+            <span>Disparo: </span><b class="text-slate-800">> 60 °C / Llama</b>
+          </div>
+          <div class="p-2.5 bg-blue-50/60 border border-blue-100 rounded text-xs text-slate-700 min-h-[46px]">
+            <b class="text-slate-500 block text-[10px] uppercase mb-0.5">Acción del Sistema:</b>
+            <span id="c3-decision">Temperatura normal...</span>
+          </div>
+        </div>
+        <div class="pt-2.5 border-t border-slate-100 flex gap-2 mt-2.5">
+          <button onclick="forzarEvento('apagar_fuego')" class="flex-1 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-medium">Clima Normal</button>
+          <button onclick="forzarEvento('inducir_fuego')" class="flex-1 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded text-xs font-medium">Fuego (Servo 90°)</button>
+        </div>
+      </div>
+
+      <!-- Caso 4: Suministro y E-Stop -->
+      <div class="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-2.5">
+            <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wide">4. Red Eléctrica</h2>
+            <span class="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">NOMINAL</span>
+          </div>
+          <div class="flex items-center space-x-3 mb-2.5">
+            <div class="text-2xl">⚡</div>
+            <div>
+              <div class="text-lg font-bold text-slate-900">120.0 V</div>
+              <p class="text-xs text-slate-500">Consumo: 3.2 A</p>
+            </div>
+          </div>
+          <div class="text-xs text-slate-600 mb-2.5">
+            <span>Enclavamiento verificado.</span>
+          </div>
+          <div class="p-2.5 bg-blue-50/60 border border-blue-100 rounded text-xs text-slate-700 min-h-[46px]">
+            <b class="text-slate-500 block text-[10px] uppercase mb-0.5">Acción del Sistema:</b>
+            <span>Tensión nominal activa.</span>
+          </div>
+        </div>
+        <div class="pt-2.5 border-t border-slate-100 mt-2.5">
+          <button onclick="alert('Enclavamiento verificado.')" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded font-medium">
+            Test Paro de Emergencia
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Panel Inferior -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+      <!-- Cámara -->
+      <div class="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Cámara de Operador (OpenCV)</h3>
+          <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full">EN VIVO</span>
+        </div>
+        <div class="w-full aspect-video bg-slate-100 rounded border border-slate-200 flex items-center justify-center overflow-hidden">
+          <img src="/video_feed" class="w-full h-full object-cover" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div class=\'p-3 text-center text-xs text-slate-400\'>Cámara no disponible.<br>Usa los botones manuales para simular.</div>';">
+        </div>
+        <p class="text-[11px] text-slate-500 mt-2">
+          Al presionar "Simular Salida", el cronómetro avanzará sin importar si la cámara ve tu rostro. Para restablecerlo pulsa "Llega Operador".
+        </p>
+      </div>
+
+      <!-- Gráfica -->
+      <div class="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col">
+        <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Historial en Vivo</h3>
+        <div class="flex-1 h-48">
+          <canvas id="telemetriaChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Diagnóstico IA -->
+      <div class="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex flex-col">
+        <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Diagnóstico y Auditoría IA</h3>
+        <div id="ai-response-box" class="flex-1 bg-blue-50/50 border border-blue-100 rounded p-3 text-xs text-slate-700 overflow-y-auto leading-relaxed max-h-48">
+          Presiona <b>Auditoría IA</b> para generar el dictamen pericial con el historial completo de eventos.
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const ctx = document.getElementById('telemetriaChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          { label: 'Temperatura (°C)', borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)', data: [], yAxisID: 'y' },
+          { label: 'Nivel Tanque (%)', borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.05)', data: [], yAxisID: 'y1' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } },
+          y: { type: 'linear', position: 'left', min: 20, max: 80, grid: { color: '#f1f5f9' }, ticks: { color: '#ef4444' } },
+          y1: { type: 'linear', position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, ticks: { color: '#2563eb' } }
+        }
+      }
+    });
+
+    function mostrarToast(texto) {
+      const toast = document.getElementById('toast-evento');
+      document.getElementById('toast-msg').innerText = texto;
+      toast.classList.remove('hidden');
+      setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+    }
+
+    // ---------- Capa de datos: MQTT (tiempo real) con respaldo HTTP ----------
+    const MQTT_WS_PORT = 9001;
+    const T_ESTADO = 'pianitech/estado';
+    let mqttConectado = false;
+    let ultimoMsgMqtt = 0;
+    let ultimoPuntoGrafica = 0;
+
+    function renderEstado(data) {
+      try {
+        document.getElementById('contador-incidentes').innerText =
+          (data.total_incidentes !== undefined) ? data.total_incidentes : data.incidentes.length;
+
+        // Caso 1
+        const c1 = data.case1;
+        document.getElementById('c1-estado-fan').innerText = c1.ventilador_activo ? "ACTIVO" : "DETENIDO";
+        document.getElementById('c1-operador-txt').innerText = `Operador: ${c1.operador_presente ? 'En puesto' : 'Ausente'}`;
+        document.getElementById('c1-tiempo').innerText = `${c1.tiempo_sin_operador_seg}s`;
+        document.getElementById('c1-decision').innerText = c1.decision_automatica;
+        const fan = document.getElementById('fan-icon');
+        const badgeC1 = document.getElementById('badge-c1');
+        if (c1.ventilador_activo) {
+          fan.classList.add('animate-spin');
+          badgeC1.className = "px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800";
+          badgeC1.innerText = "NORMAL";
+        } else {
+          fan.classList.remove('animate-spin');
+          badgeC1.className = "px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-800";
+          badgeC1.innerText = "PARO SEGURO";
+        }
+
+        // Caso 2
+        const c2 = data.case2;
+        document.getElementById('c2-nivel-txt').innerText = `${c2.nivel_agua_porcentaje}%`;
+        document.getElementById('c2-valvula-txt').innerText = `Válvula: ${c2.valvula_llenado_abierta ? 'Abierta' : 'Cerrada'}`;
+        document.getElementById('c2-barra').style.width = `${c2.nivel_agua_porcentaje}%`;
+        document.getElementById('c2-decision').innerText = c2.decision_automatica;
+        const badgeC2 = document.getElementById('badge-c2');
+        if (c2.nivel_agua_porcentaje >= 90) {
+          badgeC2.className = "px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-800";
+          badgeC2.innerText = "BLOQUEADO";
+        } else if (c2.nivel_agua_porcentaje >= 75) {
+          badgeC2.className = "px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800";
+          badgeC2.innerText = "ADVERTENCIA";
+        } else {
+          badgeC2.className = "px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800";
+          badgeC2.innerText = "LLENANDO";
+        }
+
+        // Caso 3
+        const c3 = data.case3;
+        document.getElementById('c3-temp-txt').innerText = `${c3.temperatura_c} °C`;
+        document.getElementById('c3-servo-txt').innerText = `Aspersor: ${c3.servo_aspersor_grados}° (${c3.servo_aspersor_grados > 0 ? 'Abierto' : 'Cerrado'})`;
+        document.getElementById('c3-decision').innerText = c3.decision_automatica;
+        document.getElementById('fire-icon').innerText = c3.llama_detectada ? "🔥" : "🌡️";
+        const badgeC3 = document.getElementById('badge-c3');
+        if (c3.llama_detectada || c3.temperatura_c >= 60) {
+          badgeC3.className = "px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-800";
+          badgeC3.innerText = "EXTINCIÓN ACTIVA";
+        } else if (c3.temperatura_c >= 45) {
+          badgeC3.className = "px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800";
+          badgeC3.innerText = "ALERTA TÉRMICA";
+        } else {
+          badgeC3.className = "px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800";
+          badgeC3.innerText = "NORMAL";
+        }
+
+        // Gráfica (un punto cada ~0.5 s)
+        const ahora = Date.now();
+        if (ahora - ultimoPuntoGrafica >= 450) {
+          ultimoPuntoGrafica = ahora;
+          const now = new Date().toLocaleTimeString();
+          if (chart.data.labels.length > 15) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+            chart.data.datasets[1].data.shift();
+          }
+          chart.data.labels.push(now);
+          chart.data.datasets[0].data.push(c3.temperatura_c);
+          chart.data.datasets[1].data.push(c2.nivel_agua_porcentaje);
+          chart.update();
+        }
+
+      } catch (err) {}
+    }
+
+    // Respaldo: si MQTT no está conectado (o no llegan mensajes) se consulta por HTTP
+    async function actualizarUI(forzar = false) {
+      if (!forzar && mqttConectado && (Date.now() - ultimoMsgMqtt) < 3000) return;
+      try {
+        const res = await fetch('/api/telemetria');
+        renderEstado(await res.json());
+      } catch (err) {}
+    }
+
+    function conectarMQTT() {
+      if (typeof mqtt === 'undefined') return;
+      const cliente = mqtt.connect(`ws://${location.hostname}:${MQTT_WS_PORT}`, {
+        reconnectPeriod: 2000,
+        clientId: 'panel-' + Math.random().toString(16).slice(2, 10)
+      });
+      cliente.on('connect', () => {
+        anunciarBienvenidaSistema();
+        mqttConectado = true;
+        cliente.subscribe(T_ESTADO);
+      });
+      cliente.on('close', () => { mqttConectado = false; });
+      cliente.on('error', () => { mqttConectado = false; });
+      cliente.on('message', (topic, payload) => {
+        try {
+          const datos = JSON.parse(payload.toString());
+          if (!datos.case1) return;
+          ultimoMsgMqtt = Date.now();
+          renderEstado(datos);
+        } catch (e) {}
+      });
+    }
+
+    async function forzarEvento(accion) {
+      await fetch('/api/forzar_evento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caso: accion })
+      });
+      mostrarToast(`Evento ejecutado: ${accion.replace('_', ' ').toUpperCase()}`);
+      actualizarUI(true);
+    }
+
+    async function forzarNivel(val) {
+      await fetch('/api/forzar_evento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caso: 'forzar_nivel_tanque', valor: val })
+      });
+      mostrarToast(`Nivel ajustado al ${val}%`);
+      actualizarUI(true);
+    }
+
+    async function limpiarHistorial() {
+      if (confirm("¿Deseas vaciar el historial de incidentes acumulados?")) {
+        await fetch('/api/limpiar_historial', { method: 'POST' });
+        actualizarUI(true);
+      }
+    }
+
+    async function solicitarAnalisisIA() {
+      const box = document.getElementById('ai-response-box');
+      box.innerHTML = '<i>Generando dictamen pericial con IA sobre todo el historial...</i>';
+      try {
+        const res = await fetch('/api/generar_analisis_ia', { method: 'POST' });
+        const data = await res.json();
+        let htmlFormat = data.resultado_ia
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
+            .replace(/• (.*?)(?=\n|$)/g, '<li class="ml-3 list-disc py-0.5">$1</li>')
+            .replace(/\n/g, '<br/>');
+        box.innerHTML = `<div>${htmlFormat}</div>`;
+      } catch (e) {
+        box.innerHTML = '<span class="text-rose-600">Error al contactar con la API.</span>';
+      }
+    }
+
+    conectarMQTT();
+    setInterval(actualizarUI, 500);
+    actualizarUI();
+  
+    // ---------- Bienvenida por Voz Automática ----------
+    let bienvenidaRealizada = false;
+
+    function anunciarBienvenidaSistema() {
+        if (bienvenidaRealizada) return;
+        if ('speechSynthesis' in window) {
+            bienvenidaRealizada = true;
+            const ahora = new Date();
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const fechaStr = ahora.toLocaleDateString('es-ES', opcionesFecha);
+            const horaStr = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+            const mensajeBienvenida = `Bienvenido al sistema Pianitech. Hoy es ${fechaStr}, son las ${horaStr}. Cuarto de máquinas operando en funcionamiento normal.`;
+
+            setTimeout(() => {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(mensajeBienvenida);
+                utterance.lang = 'es-ES';
+                utterance.rate = 1.05;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }, 1200);
+        }
+    }
+
+
+    // ---------- Sistema de Alertas Sonoras y Síntesis de Voz Robusto ----------
+    let ultimoTipoAlarmaReproducida = "";
+    let ultimaVezAlarma = 0;
+
+    // Habilitar audio con interacción del usuario
+    document.addEventListener('click', () => {
+      if (window.speechSynthesis && window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    }, { once: true });
+
+    function emitirPitido() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        const audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {
+        console.warn("Error emitiendo pitido:", e);
+      }
+    }
+
+    function anunciarAlertaPorVoz(mensaje) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(mensaje);
+        utterance.lang = 'es-ES';
+        utterance.rate = 1.05;
+        utterance.pitch = 1.1;
+
+        const voces = window.speechSynthesis.getVoices();
+        const vozEspañol = voces.find(v => v.lang.startsWith('es'));
+        if (vozEspañol) {
+          utterance.voice = vozEspañol;
+        }
+
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function evaluarEventualidadesYAlertar(data) {
+      const ahora = Date.now();
+      let tipoAlarmaActual = "NORMAL";
+      let mensajeVoz = "";
+
+      // Caso 3: Incendio / Fuego / Temperatura alta
+      const c3 = data.case3;
+      if (c3 && (c3.llama_detectada || c3.temperatura_c >= 60)) {
+        tipoAlarmaActual = "INCENDIO_ALTO";
+        mensajeVoz = "¡Atención! Se ha detectado un incendio con nivel alto. Todo el personal debe ser evacuado inmediatamente.";
+      } 
+      // Caso 2: Sobrellenado crítico del tanque
+      else if (data.case2 && data.case2.nivel_agua_porcentaje >= 90) {
+        tipoAlarmaActual = "TANQUE_ALTO";
+        mensajeVoz = "¡Atención! Alerta de nivel alto en el tanque de agua. Riesgo de sobrellenado y bloqueo de válvula.";
+      }
+      // Caso 1: Operador ausente / Paro seguro
+      else if (data.case1 && !data.case1.ventilador_activo && data.case1.tiempo_sin_operador_seg >= 5) {
+        tipoAlarmaActual = "OPERADOR_AUSENTE";
+        mensajeVoz = "¡Aviso de seguridad! Operador ausente detectado en celda. Paro seguro de maquinaria activado, riesgo medio.";
+      }
+
+      if (tipoAlarmaActual !== "NORMAL") {
+        if (tipoAlarmaActual !== ultimoTipoAlarmaReproducida || (ahora - ultimaVezAlarma) > 10000) {
+          ultimoTipoAlarmaReproducida = tipoAlarmaActual;
+          ultimaVezAlarma = ahora;
+          
+          emitirPitido();
+          setTimeout(() => {
+            anunciarAlertaPorVoz(mensajeVoz);
+          }, 600);
+        }
+      } else {
+        if ((ahora - ultimaVezAlarma) > 8000) {
+          ultimoTipoAlarmaReproducida = "NORMAL";
+        }
+      }
+    }
+
+    // ---------- Bienvenida por Voz Automática ----------
+    let bienvenidaRealizada = false;
+
+    function anunciarBienvenidaSistema() {
+        if (bienvenidaRealizada) return;
+        if ('speechSynthesis' in window) {
+            bienvenidaRealizada = true;
+            const ahora = new Date();
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const fechaStr = ahora.toLocaleDateString('es-ES', opcionesFecha);
+            const horaStr = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+            const mensajeBienvenida = `Bienvenido al sistema Pianitech. Hoy es ${fechaStr}, son las ${horaStr}. Cuarto de máquinas operando en funcionamiento normal.`;
+
+            setTimeout(() => {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(mensajeBienvenida);
+                utterance.lang = 'es-ES';
+                utterance.rate = 1.05;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }, 800);
+        }
+    }
+
+</script>
+</body>
+</html>
